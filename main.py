@@ -25,6 +25,10 @@ def preprocess_text(text):
 
 df['processed_text'] = df['text'].apply(preprocess_text)
 
+# Map 'positive' to 1 and 'negative' to 0
+label_map = {'positive': 1, 'negative': 0}
+df['label'] = df['label'].map(label_map)
+
 def get_features(words):
     return {word: True for word in words}
 
@@ -46,6 +50,6 @@ def analyze_sentiment(text):
     return sentiment_score
 
 # Example usage
-text = "I love this product!"
+text = "bad movie"
 sentiment_score = analyze_sentiment(text)
 print(f'Sentiment score: {sentiment_score * 100:.2f}%')

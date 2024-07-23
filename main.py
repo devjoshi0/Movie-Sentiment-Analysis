@@ -1,53 +1,51 @@
+import pandas as pd
 import nltk
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 from nltk.classify import NaiveBayesClassifier
 from nltk.classify.util import accuracy
-import pandas as pd
 import string
-from sklearn import *
-from sklearn.model_selection import train_test_split
 
+# Download necessary NLTK data
+nltk.download('punkt')
+nltk.download('stopwords')
 
-nltk.download('all')
+# Load CSV file
+df = pd.read_csv('IMDB Dataset.csv')
 
-dataset = pd.read_csv('IMDB Dataset.csv')
+# Preprocess the data
+stop_words = set(stopwords.words('english'))
 
-stop_words = stopwords.words('english')
+def preprocess_text(text):
+    # Tokenize the text
+    words = word_tokenize(text)
+    # Remove punctuation and stop words, and convert to lowercase
+    words = [word.lower() for word in words if word.isalpha() and word.lower() not in stop_words]
+    return words
 
-def preprocess(text):
-    tokens = nltk.word_tokenize(text.lower())
-    filtered_tokens = [token for token in tokens if token not in stop_words]
+df['processed_text'] = df['text'].apply(preprocess_text)
 
-    lemma = nltk.WordNetLemmatizer()
-    lemma_tokens = [lemma.lemmatize(token) for token in filtered_tokens]
+def get_features(words):
+    return {word: True for word in words}
 
-    processed_text = ' '.join(lemma_tokens)
-    return processed_text
+# Create a list of tuples for training
+train_data = [(get_features(words), label) for words, label in zip(df['processed_text'], df['label'])]
 
-
-
-dataset['processed_text'] = dataset['text'].apply(preprocess)
-
-
-train_data, test_data = train_test_split(dataset[['review', 'sentiment']], test_size=0.2)
-
-
-train_data = [(row['review'], row['sentiment']) for index, row in train_data.iterrows()]
-test_data = [(row['review'], row['sentiment']) for index, row in test_data.iterrows()]
-
-
+# Train a Naive Bayes classifier
 classifier = NaiveBayesClassifier.train(train_data)
 
+# Calculate and print the accuracy of the classifier on the training data
+train_accuracy = accuracy(classifier, train_data)
+print(f'Accuracy: {train_accuracy * 100:.2f}%')
 
-print(f"Accuracy: {accuracy(classifier, test_data) * 100:.2f}%")
-classifier.show_most_informative_features(10)
-
-def predict_sentiment(text):
-    processed_text = preprocess(text)
+def analyze_sentiment(text):
+    processed_text = preprocess_text(text)
     features = get_features(processed_text)
-    return classifier.classify(features)
+    sentiment_prob_dist = classifier.prob_classify(features)
+    sentiment_score = sentiment_prob_dist.prob(1)  # Probability of positive sentiment
+    return sentiment_score
 
-new_text = "I love programming in Python!"
-predicted_sentiment = predict_sentiment(new_text)
-print(f"The predicted sentiment for the text is: {predicted_sentiment}")
+# Example usage
+text = "I love this product!"
+sentiment_score = analyze_sentiment(text)
+print(f'Sentiment score: {sentiment_score * 100:.2f}%')

@@ -18,15 +18,12 @@ def extract_id(user_input):
     response = requests.get(search_url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    link = soup.find('link', rel='canonical')
-    if link:
-        url = link['href']
-        movie_id = url.split('/')[-2]
-        print(movie_id)
+    first_result = soup.find('td', class_='result_text')
+    if first_result and first_result.a:
+        movie_id = first_result.a['href'].split('/')[2]
         return movie_id
     else:
         return None
-
 
 def scrape_imdb_reviews(movie_name):
 

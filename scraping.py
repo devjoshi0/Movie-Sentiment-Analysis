@@ -15,34 +15,22 @@ user_input = "avatar"
 
 def extract_id(movie_name, api_key):
     url = f"http://www.omdbapi.com/?t={movie_name}&apikey={api_key}"
-    soup = BeautifulSoup(response.text, 'html.parser')
+    response = requests.get(url)
 
-    link = soup.find('link', rel='canonical')
-    if link:
-        url = link['href']
-        movie_id = url.split('/')[-2]
-        print(movie_id)
-        return movie_id
+    if response.status_code == 200:
+        data = response.json()
+        if data.get('Response') == 'True':
+            imdb_id = data.get('imdbID')
+            return imdb_id
+        else:
+            return "Movie not found!"
     else:
-        return None
+        return "Error occured"
 
 
-def scrape_imdb_reviews(movie_name):
+def scrape_imdb_reviews(movie_id):
 
-    search_url = f"https://www.imdb.com/find?q={movie_name}&s=tt&ttype=ft&ref_=fn_ft"
-    search_response = requests.get(search_url)
-    search_soup = BeautifulSoup(search_response.text, 'html.parser')
-    
-    '''
-    result_text = search_soup.find('td', class_='result_text')
-    if result_text is not None:
-        movie_id = result_text.find('a')['href'].split('/')[2]
-        print(movie_id)
-    else:
-        movie_id = None  # or handle the case when movie_id is not found
-'''
-
-    reviews_url = f"https://www.imdb.com/title/tt0499549/reviews/?ref_=tt_ov_rt"
+    reviews_url = f"https://www.imdb.com/title/{movie_id}/reviews/?ref_=tt_ov_rt"
     reviews_response = requests.get(reviews_url)
     reviews_soup = BeautifulSoup(reviews_response.text, 'html.parser')
     review_containers = reviews_soup.find_all('div', class_='review-container')
@@ -57,6 +45,17 @@ def scrape_imdb_reviews(movie_name):
         file.write(json_data)
 
 
-scrape_imdb_reviews(user_input)
+def main():
+    movie_name = input("Enter the name of the movie: ")
+    api_key = '6112d89c'
+    
+    imdb_id =extract_id(movie_name, api_key)
+    if imdb_id.startswith('tt'):
+        print(f"The IMDb ID for '{movie_name}' is: {imdb_id}")
+        print(f"https://www.imdb.com/title/{imdb_id}/reviews/?ref_=tt_ov_rt")
+        scrape_imdb_reviews(imdb_id)
+    else:
+        print(imdb_id)
 
-
+if __name__ == "__main__":
+    main()

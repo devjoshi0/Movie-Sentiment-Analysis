@@ -9,9 +9,13 @@ import requests
 from bs4 import BeautifulSoup
 import pandas
 import json
-from sentiment import *
+import os
+from dotenv import load_dotenv
 
-user_input = "avatar"
+
+load_dotenv("env/.env")
+api_key = os.getenv('API_KEY')
+
 
 def extract_id(movie_name, api_key):
     url = f"http://www.omdbapi.com/?t={movie_name}&apikey={api_key}"
@@ -40,14 +44,12 @@ def scrape_imdb_reviews(movie_id):
         review = container.find('div', class_='text show-more__control').text.strip()
         reviews.append(review)
 
-    json_data = json.dumps(reviews[:100])
-    with open('reviews.json', 'w') as file:
-        file.write(json_data)
-
+        json_data = json.dumps(reviews[:100])
+        with open('reviews.json', 'w') as file:
+            file.write(json_data)
 
 def main():
     movie_name = input("Enter the name of the movie: ")
-    api_key = '6112d89c'
     
     imdb_id =extract_id(movie_name, api_key)
     if imdb_id.startswith('tt'):

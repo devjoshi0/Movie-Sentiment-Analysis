@@ -8,7 +8,7 @@ from nltk.classify.util import accuracy
 nltk.download('punkt')
 nltk.download('stopwords')
 
-data_frame = pd.read_csv('IMDB Dataset.csv')
+data_frame = pd.read_csv('dataset/IMDB Dataset.csv')
 
 
 stop_words = set(stopwords.words('english'))

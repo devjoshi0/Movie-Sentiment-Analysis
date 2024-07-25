@@ -7,29 +7,43 @@ to be processed for the sentiment analysis model.
 import string
 import requests
 from bs4 import BeautifulSoup
-import pandas
+import urllib.parse
 import json
-
+from sentiment import *
 
 user_input = "avatar"
 
+def extract_id(user_input):
+    search_url = f"https://www.imdb.com/find?q={urllib.parse.quote(user_input)}&s=tt&ttype=ft&ref_=fn_ft"
+    response = requests.get(search_url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    link = soup.find('link', rel='canonical')
+    if link:
+        url = link['href']
+        movie_id = url.split('/')[-2]
+        print(movie_id)
+        return movie_id
+    else:
+        return None
 
 
-# Function to scrape IMDB reviews
 def scrape_imdb_reviews(movie_name):
-    
+
     search_url = f"https://www.imdb.com/find?q={movie_name}&s=tt&ttype=ft&ref_=fn_ft"
     search_response = requests.get(search_url)
     search_soup = BeautifulSoup(search_response.text, 'html.parser')
+    
+    '''
     result_text = search_soup.find('td', class_='result_text')
     if result_text is not None:
         movie_id = result_text.find('a')['href'].split('/')[2]
         print(movie_id)
     else:
         movie_id = None  # or handle the case when movie_id is not found
+'''
 
-
-    reviews_url = f"https://www.imdb.com/title/tt0499549/reviews/?ref_=tt_ov_rt"
+    reviews_url = f"https://www.imdb.com/title/{extract_id(search_url)}/reviews/?ref_=tt_ov_rt"
     reviews_response = requests.get(reviews_url)
     reviews_soup = BeautifulSoup(reviews_response.text, 'html.parser')
     review_containers = reviews_soup.find_all('div', class_='review-container')
@@ -45,3 +59,5 @@ def scrape_imdb_reviews(movie_name):
 
 
 scrape_imdb_reviews(user_input)
+
+

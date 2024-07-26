@@ -44,7 +44,7 @@ def scrape_imdb_reviews(movie_id):
         review = container.find('div', class_='text show-more__control').text.strip()
         reviews.append(review)
 
-        json_data = json.dumps(reviews[:100])
+        json_data = json.dumps(reviews[:100], indent=4, seperators=(',', ':'))
         with open('reviews.json', 'w') as file:
             file.write(json_data)
 

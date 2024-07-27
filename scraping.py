@@ -11,7 +11,7 @@ import pandas
 import json
 import os
 from dotenv import load_dotenv
-from sentiment import analyze_sentiment
+from sentiment import analyze_sentiment, preprocess_text
 
 load_dotenv("env/.env")
 api_key = os.getenv('API_KEY')
@@ -50,10 +50,10 @@ def store_reviews(reviews):
     analyzed_reviews = []
     for review in reviews:
         sentiment_score = analyze_sentiment(review)
-        analyzed_reviews.append({"review" : review, "sentiment_score" : analyze_sentiment(review)})
+        analyzed_reviews.append({"review" : review, "sentiment_score" : sentiment_score * 100})
         for i in range(len(reviews)):
             print(reviews[i])
-        return analyzed_reviews
+    return analyzed_reviews
 
 def convert_to_json(data, filename):
     with open(filename, 'w') as file:

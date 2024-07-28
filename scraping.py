@@ -49,7 +49,7 @@ def scrape_imdb_reviews(movie_id):
 def store_reviews(reviews):
     analyzed_reviews = []
     for review in reviews:
-        sentiment_score = analyze_sentiment(review)
+        sentiment_score = analyze_sentiment(review.lower())
         analyzed_reviews.append({"review" : review, "sentiment_score" : sentiment_score * 100})
         for i in range(len(reviews)):
             print(reviews[i])

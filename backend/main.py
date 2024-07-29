@@ -65,7 +65,31 @@ def delete_from_watchlist(movie_id):
     db.session.commit()
     return redirect(url_for("watchlist"))
 
-
+@app.route('/results', methods=['GET', 'POST'])
+def results():
+    if request.method == 'POST':
+        search = request.form['movie_name']
+        url = f'https://api.themoviedb.org/3/search/multi?api_key={api_key}&query={search}'
+        response = requests.get(url)
+        r = response.json()
+        result = r['results']
+        for i in result:
+            if i['media_type'] == 'movie':
+                i['media_type'] = 'Movie'
+            elif i['media_type'] == 'tv':
+                i['media_type'] = 'TV Show'
+        return render_template('search_results.html', result=result)
+    
+@app.route('/genres/<int:genre_id>')
+def genres(genre_id):
+    try:
+        url = f'https://api.themoviedb.org/3/discover/movie?api_key={api_key}&with_genres={genre_id}'
+        response = requests.get(url)
+        data = response.json()
+        result = data['results']
+        return render_template('genres.html', result=result)
+    except Exception as e:
+        
 if __name__ == "__main__":
     db.create_all()
     app.run(debug=True)

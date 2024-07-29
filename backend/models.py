@@ -1,19 +1,18 @@
 #contains database models (2)
-
+#what fields we need how we will add them how we will delete them
 from config import db
+from flask_sqlalchemy import SQLAlchemy
 
-
-class Contact(db.Model):
+class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(50), unique=False, nullable=False)
-    last_name = db.Column(db.String(50), unique=False, nullable=False)
-    email = db.Column(db.String(120), unique = True, nullable=False)
+    title = db.Column(db.String(50), unique=True, nullable=False)
+    image = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    watchlist = db.relationship('Watchlist', backref='movie', lazy=True)
 
-    def to_json(self):
-        return {
-            "id" : self.id,
-            "firstName" : self.first_name,
-            "lastName":self.last_name,
-            "email" : self.email,
 
-        }
+
+class Watchlist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)

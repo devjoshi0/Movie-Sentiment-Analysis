@@ -89,7 +89,34 @@ def genres(genre_id):
         result = data['results']
         return render_template('genres.html', result=result)
     except Exception as e:
-        
+
+@app.route('/details/<movie_id>')
+def details(movie_id):
+    movieid = get_movie_ids()
+    tv_id = get_tv_ids()
+    try:
+        if int(movie_id) in movieid:
+            url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}'
+            response = requests.get(url)
+            data = response.json()
+            name = data['title']
+            poster = f'https://image.tmdb.org/t/p/w500{data["poster_path"]}'
+            year = data['release_date'].split('-')[0]
+            overview = data['overview']
+            rating = data['vote_average']
+            vote_count = data['vote_count']
+            trailer = embeded_youtube(movie_id) if 'videos' in data else None
+            category = data['genres']
+            category_name = [i['name'] for i in category]
+            runtime = get_movie_runtime(movie_id)
+            return render_template('details.html', name=name, poster=poster, year=year, overview=overview, rating=rating, vote_count=vote_count, category_name=category_name, trailer=trailer, runtime=runtime)
+        elif int(movie_id) in tv_id:
+            url = f'https://api.themoviedb.org/3/tv/{movie_id}?api_key={api_key}'
+            response = requests.get(url)
+            data = response.json()
+            name = data['name']
+            poster = f'https://image.tmdb.org/t/p/w500{data["poster_path"]}'
+
 if __name__ == "__main__":
     db.create_all()
     app.run(debug=True)

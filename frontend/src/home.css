@@ -1,0 +1,40 @@
+body {
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+.navbar-brand .minimal {
+  color: #ffc107;
+}
+
+.showonlg {
+  display: none;
+}
+
+.showonsm {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .showonlg {
+    display: block;
+  }
+
+  .showonsm {
+    display: none;
+  }
+}
+
+.card-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bookmark-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 10px;
+  cursor: pointer;
+}

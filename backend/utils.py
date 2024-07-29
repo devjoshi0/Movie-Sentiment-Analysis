@@ -1,6 +1,6 @@
 import requests
-from main import api_key
 
+api_key = "06c3064b912363d278bee2a70f9bdc2b"
 
 def get_movie_ids():
     url = f"https://api.themoviedb.org/3/movie/popular?api_key={api_key}"

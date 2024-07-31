@@ -1,8 +1,8 @@
 #contains database models (2)
 #what fields we need how we will add them how we will delete them
-from config import db
+from config import Config
 from flask_sqlalchemy import SQLAlchemy
-
+db = SQLAlchemy()
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), unique=True, nullable=False)

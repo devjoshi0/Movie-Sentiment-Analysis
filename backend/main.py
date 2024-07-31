@@ -1,4 +1,5 @@
 # localhost:8000/create_contact
+import requests
 from flask import Flask, render_template, redirect, url_for, request
 from config import Config
 from models import db, Movie, Watchlist
@@ -17,7 +18,7 @@ def home():
     popular_movies = get_popular_movies()
     popular_tv = get_popular_tv()
     new_releases = get_new_releases()
-    return render_template("home.html", trending=trending, popular_movies=popular_movies, popular_tv=popular_tv, new_releases=new_releases)
+    return render_template("index.html", trending=trending, popular_movies=popular_movies, popular_tv=popular_tv, new_releases=new_releases)
 
 @app.route("/watchlist")
 def watchlist():
@@ -80,15 +81,6 @@ def results():
                 i['media_type'] = 'TV Show'
         return render_template('search_results.html', result=result)
     
-@app.route('/genres/<int:genre_id>')
-def genres(genre_id):
-    try:
-        url = f'https://api.themoviedb.org/3/discover/movie?api_key={api_key}&with_genres={genre_id}'
-        response = requests.get(url)
-        data = response.json()
-        result = data['results']
-        return render_template('genres.html', result=result)
-    except Exception as e:
 
 @app.route('/details/<movie_id>')
 def details(movie_id):
@@ -125,9 +117,9 @@ def details(movie_id):
             return render_template('details.html', name=name, poster=poster, overview=overview, rating=rating, vote_count=vote_count, category_name=category_name, trailer=trailer)
     except Exception as e:
         print(e)
-        return render_template('home.html')
+        return render_template('index.html')
 
 
 if __name__ == "__main__":
     db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

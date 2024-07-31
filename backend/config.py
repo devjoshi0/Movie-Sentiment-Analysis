@@ -1,15 +1,9 @@
 #building api (1)
 #basic configuration this happens first
 #data
-from flask import Flask 
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
+import os
 
-app = Flask(__name__)
-CORS(app)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-
-db = SQLAlchemy(app)
+class Config:
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///watchlist.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = os.urandom(24)

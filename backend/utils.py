@@ -53,3 +53,12 @@ def get_popular_tv():
     response = requests.get(url)
     tv_list = response.json()["results"]
     return [tv["id"] for tv in tv_list]
+
+def embeded_youtube(movie_id):
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={api_key}"
+    response = requests.get(url)
+    videos = response.json()["results"]
+    for video in videos:
+        if video["site"] == "YouTube" and video["type"] == "Trailer":
+            return f"https://www.youtube.com/embed/{video['key']}"
+    return None

@@ -2,7 +2,7 @@
 from flask import Flask, render_template, redirect, url_for, request
 from config import Config
 from models import db, Movie, Watchlist
-from utils import *
+from utils import get_movie_ids, get_tv_ids, embeded_youtube, get_movie_runtime, get_trending, get_popular_movies, get_popular_tv, get_new_releases
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -116,6 +116,17 @@ def details(movie_id):
             data = response.json()
             name = data['name']
             poster = f'https://image.tmdb.org/t/p/w500{data["poster_path"]}'
+            overview = data['overview']
+            rating = data['vote_average']
+            vote_count = data['vote_count']
+            trailer = embeded_youtube(movie_id) if 'videos' in data else None
+            category = data['genres']
+            category_name = [i['name'] for i in category]
+            return render_template('details.html', name=name, poster=poster, overview=overview, rating=rating, vote_count=vote_count, category_name=category_name, trailer=trailer)
+    except Exception as e:
+        print(e)
+        return render_template('home.html')
+
 
 if __name__ == "__main__":
     db.create_all()

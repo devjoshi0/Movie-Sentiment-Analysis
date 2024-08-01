@@ -2,12 +2,13 @@
 import requests
 from flask import Flask, render_template, redirect, url_for, request
 from config import Config
+from flask_cors import CORS
 from models import db, Movie, Watchlist
 from utils import get_movie_ids, get_tv_ids, embeded_youtube, get_movie_runtime, get_trending, get_popular_movies, get_popular_tv, get_new_releases
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
+cors = CORS(app, origins="*")
 db.init_app(app)
 app.app_context().push()
 
@@ -122,4 +123,4 @@ def details(movie_id):
 
 if __name__ == "__main__":
     db.create_all()
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8080)

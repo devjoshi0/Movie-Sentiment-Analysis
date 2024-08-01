@@ -11,10 +11,10 @@ const Home = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const trendingResponse = await axios.get('HTTP://localhost:5000/');
-            const popularMoviesResponse = await axios.get('http://localhost:5000/popular_movies');
-            const popularTvResponse = await axios.get('http://localhost:5000/popular_tv');
-            const newReleasesResponse = await axios.get('http://localhost:5000/new_releases');
+            const trendingResponse = await axios.get('HTTP://localhost:5173/');
+            const popularMoviesResponse = await axios.get('http://localhost:5173/popular_movies');
+            const popularTvResponse = await axios.get('http://localhost:5173/popular_tv');
+            const newReleasesResponse = await axios.get('http://localhost:5173/new_releases');
 
             setTrending(trendingResponse.data.trending);
             setPopularMovies(popularMoviesResponse.data);
